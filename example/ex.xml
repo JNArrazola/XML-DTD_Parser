@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DTD declaration -->
+<!DOCTYPE database SYSTEM "database.dtd">
+
+<!-- XML format based on DTD -->
+<database>
+   <table>
+      <name>users</name>
+      <columns>
+         <column>
+            <name>id</name>
+            <type>integer</type>
+            <constraints>
+               <constraint>primary key</constraint>
+               <constraint>not null</constraint>
+            </constraints>
+         </column>
+         <column>
+            <name>name</name>
+            <type>string</type>
+            <constraints>
+               <constraint>not null</constraint>
+            </constraints>
+         </column>
+         <column>
+            <name>age</name>
+            <type>integer</type>
+            <constraints>
+               <constraint>min 0</constraint>
+               <constraint>max 120</constraint>
+            </constraints>
+         </column>
+         <column>
+            <name>email</name>
+            <type>string</type>
+            <constraints>
+               <constraint>unique</constraint>
+            </constraints>
+         </column>
+      </columns>
+   </table>
+</database>

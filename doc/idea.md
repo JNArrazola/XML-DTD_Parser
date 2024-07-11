@@ -1,0 +1,2 @@
+# Práctica 5 - Librería Java para definir reglas de base de datos a partir de DTD
+To build the AST I can use a hm<Tag, List<Object>>, where i can visualize the object list as the children nodes of the ast. 
