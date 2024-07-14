@@ -1,4 +1,4 @@
-package edu.upvictoria.fpoo;
+package edu.upvictoria.fpoo.XML_Parser;
 
 /**
  * Interpreter class

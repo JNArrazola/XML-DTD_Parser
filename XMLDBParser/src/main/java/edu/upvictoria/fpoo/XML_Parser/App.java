@@ -1,4 +1,4 @@
-package edu.upvictoria.fpoo;
+package edu.upvictoria.fpoo.XML_Parser;
 
 import java.util.ArrayList;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Profesor: Dr. Said Polanco Martagon
  */
 public class App {
-  private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/test.xml";
+  private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex.xml";
 
   public static void main(String[] args) {
     ArrayList<Token> token = null;
