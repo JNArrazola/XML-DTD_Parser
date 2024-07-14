@@ -8,8 +8,12 @@ public class ErrorHandler {
     /**
      * Function to print a syntax error
       */
-    public void constraintError(String message) {
+    public static void constraintError(String message) {
         System.out.println("Constraint error: " + message);
+    }
+
+    public static void throwError(String message, int line) {
+      throw new RuntimeException("Error at line " + line + ": " + message);
     }
 
     /**
@@ -18,8 +22,7 @@ public class ErrorHandler {
      * @param value
      * @param type
       */
-    public void typeError(String message, String value, String type) {
+    public static void typeError(String message, String value, String type, int line) {
         System.out.println("Value: " + value + " is not of type: " + message);
     }
-
 }

@@ -15,12 +15,12 @@ public class FileManagement {
      * @return
      * @throws Exception
       */
-    public static String readFile(String path) throws Exception {
-        if(!path.endsWith(".xml")) // Check if the file is an XML file
-            throw new RuntimeException("File must be an XML file");
-        
+    public static String read(String path) throws Exception {
+        if(!path.endsWith(".xml"))
+            return path;
+
         // Read the file
-        try(BufferedReader br = new BufferedReader(new FileReader(path))){
+        try(BufferedReader br = new BufferedReader(new FileReader(path.toString()))){
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
             
