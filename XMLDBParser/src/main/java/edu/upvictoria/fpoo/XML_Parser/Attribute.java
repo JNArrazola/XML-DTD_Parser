@@ -25,4 +25,12 @@ public class Attribute {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "Attribute{" +
+                "name='" + name + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

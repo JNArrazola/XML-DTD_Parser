@@ -1,6 +1,7 @@
 package edu.upvictoria.fpoo.XML_Parser;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * Parser class
@@ -8,14 +9,137 @@ import java.util.ArrayList;
  * class and interpreting the XML file.
   */
 public class XMLParser {
+  private int actual = 0;
+  private Stack<TagNode> stack;
   private ArrayList<Token> tokens;
 
-  XMLParser(ArrayList<Token> tokens) {
+  public ArrayList<TagNode> parse(ArrayList<Token> tokens){
+    ArrayList<TagNode> nodes = new ArrayList<TagNode>();
+    stack = new Stack<TagNode>();
     this.tokens = tokens;
+
+    while (getActualToken() != TokenType.EOF) {
+      switch (getActualToken()) {
+        case OPEN_TAG:
+          if(peek() == TokenType.QUESTION_MARK){
+            handleTrash();
+            break;
+          } else if(peek() == TokenType.EXCLAMATION){
+            // TODO: This method is supposed to read the DTD
+            // handleDTDRelation(); 
+            break;
+          } else if(peek() == TokenType.SLASH){
+            // handleCloseTag();
+          } else if (peek() == TokenType.TAG_CONTENT){
+            handleOpenTag();
+          } else 
+            ErrorHandler.throwError("Invalid tag: expected name", tokens.get(actual).getLine());
+          break;
+      
+        default:
+          break;
+      }
+      advance();
+    }
+
+    printFromRoot(stack.peek());
+    return nodes;
   }
 
-  public void parse() {
+  /* Auxiliar methods */
+
+  /**
+   * Check next token type respecting the actual token
+   * @return TokenType
+    */
+  private TokenType peek() {
+    return tokens.get(actual + 1).getType();
+  }
+
+  /**
+   * get the actual token type
+   * @return TokenType
+    */
+  private TokenType getActualToken(){
+    return tokens.get(actual).getType();
+  }
+
+  /**
+   * Advance to the next token
+    */
+  private void advance() {
+    actual++;
+  }
+
+  /**
+   * Advance n tokens
+   * @param n
+    */
+  private void advance(int n){
+    actual += n;
+  } 
+
+  private void printFromRoot(TagNode root){
+    System.out.println(root.toString());
+    for(TagNode child : root.getChildren())
+      printFromRoot(child);
+  }
+
+  //? Handlers
+
+  /**
+   * Method for handling tags that i will not use
+    */
+  private void handleTrash(){
+    while(getActualToken() != TokenType.CLOSE_TAG)
+      advance();
+  }
+
+  private void handleOpenTag(){
+    advance();
     
-  }
+    TagNode node = new TagNode();
+    Stack<Token> tagTokens = new Stack<Token>();
 
+    while(getActualToken() != TokenType.CLOSE_TAG){
+      switch (getActualToken()) {
+        case TAG_CONTENT:
+
+          // If there is an equal sign, the next token must be a string 
+          // ej. tag="value"
+          if(!tagTokens.isEmpty()&& tagTokens.peek().getType() == TokenType.EQUAL)
+            ErrorHandler.throwError("Invalid tag: expected attribute value", tokens.get(actual).getLine());
+
+          // If the node name is null, the first token must be the name of the tag
+          // ej. <tag>
+          if(node.getName() == null)
+            node.setName(tokens.get(actual).getLexeme());
+          else
+            tagTokens.push(tokens.get(actual)); // If the node name is not null, the token is an attribute
+          break;
+        case EQUAL:
+          if(tagTokens.isEmpty())
+            ErrorHandler.throwError("Invalid tag: expected attribute name", tokens.get(actual).getLine());
+          tagTokens.push(tokens.get(actual));
+          break;
+        case STRING:
+          if(tagTokens.isEmpty())
+            ErrorHandler.throwError("Invalid tag: expected attribute value", tokens.get(actual).getLine());
+          else if(tagTokens.peek().getType() != TokenType.EQUAL)
+            ErrorHandler.throwError("Invalid tag: expected equal sign", tokens.get(actual).getLine());
+          else 
+            tagTokens.pop();
+            node.addAttribute(new Attribute(tagTokens.pop().getLexeme(), tokens.get(actual).getLexeme()));
+          break;
+        default:
+          break;
+      }
+      advance();
+    }
+
+    if(!stack.empty())
+      stack.peek().addChild(node);
+    
+    stack.push(node);
+  }
 }

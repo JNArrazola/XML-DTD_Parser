@@ -82,6 +82,8 @@ public class XMLLexer {
     }
     if(openedTag)
       ErrorHandler.throwError("Tag not closed", line);
+
+    tokens.add(new Token(TokenType.EOF, "", actual, actual, line));
     return tokens;
   }
 
@@ -175,7 +177,7 @@ public class XMLLexer {
   public void consumeTagContent() {
     int start = actual;
 
-    while (!isAtEnd() && isAlphanumeric(peek()))
+    while (!isAtEnd() && isAlphanumeric(peek()) || peek() == '-')
       advance();
     
     addToken(TokenType.TAG_CONTENT, input.substring(start, actual + 1));

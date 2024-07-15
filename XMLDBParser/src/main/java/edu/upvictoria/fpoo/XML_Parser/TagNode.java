@@ -12,12 +12,7 @@ public class TagNode {
     private ArrayList<Attribute> attributes; // Attributes of the tag
     private String content; // Content of the tag
 
-    /**
-     * Constructor
-     * @param name Tag name
-      */
-    public TagNode(String name) {
-        this.name = name;
+    TagNode() {
         children = new ArrayList<TagNode>();
         attributes = new ArrayList<Attribute>();
     }
@@ -40,6 +35,10 @@ public class TagNode {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public ArrayList<TagNode> getChildren() {
         return children;
     }
@@ -50,5 +49,23 @@ public class TagNode {
 
     public String getContent() {
         return content;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name);
+        for (Attribute attribute : attributes) 
+            sb.append(" ").append(attribute.toString());
+        
+        if (content != null) 
+            sb.append(content);
+        else 
+            sb.append(" content: null");
+
+        for (TagNode child : children) {
+            sb.append(child.toString());
+        }
+        return sb.toString();
     }
 }
