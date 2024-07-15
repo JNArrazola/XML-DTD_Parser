@@ -1,2 +1,11 @@
-<manuel nombre="papa" name = "10">  </pedro> 
-<!--  -->
+<pedro nombre="papa" name = "10"> 
+    <manuel rol="hijo">pedro</manuel>
+    <manuel rol="hijo">
+        <joselin rol="hijo">pedro</joselin>
+        <joselin rol="hijo">pedro</joselin>
+    </manuel>
+    <manuel rol="hijo">
+        <joselin rol="hijo">pedro</joselin>
+        <joselin rol="hijo">pedro</joselin>
+    </manuel>
+</pedro>  

@@ -12,11 +12,13 @@ public class XMLParser {
   private int actual = 0;
   private Stack<TagNode> stack;
   private ArrayList<Token> tokens;
+  private TagNode root;
 
   public ArrayList<TagNode> parse(ArrayList<Token> tokens){
     ArrayList<TagNode> nodes = new ArrayList<TagNode>();
     stack = new Stack<TagNode>();
     this.tokens = tokens;
+    root = null;
 
     while (getActualToken() != TokenType.EOF) {
       switch (getActualToken()) {
@@ -29,20 +31,20 @@ public class XMLParser {
             // handleDTDRelation(); 
             break;
           } else if(peek() == TokenType.SLASH){
-            // handleCloseTag();
+            handleCloseTag();
           } else if (peek() == TokenType.TAG_CONTENT){
             handleOpenTag();
           } else 
             ErrorHandler.throwError("Invalid tag: expected name", tokens.get(actual).getLine());
           break;
-      
+          
         default:
           break;
       }
       advance();
     }
 
-    printFromRoot(stack.peek());
+    printTree(root, 0);
     return nodes;
   }
 
@@ -72,17 +74,21 @@ public class XMLParser {
   }
 
   /**
-   * Advance n tokens
-   * @param n
+   * Print the tree structure
+   * @param node
+   * @param level
     */
-  private void advance(int n){
-    actual += n;
-  } 
-
-  private void printFromRoot(TagNode root){
-    System.out.println(root.toString());
-    for(TagNode child : root.getChildren())
-      printFromRoot(child);
+  private void printTree(TagNode node, int level){
+    for(int i = 0; i < level; i++)
+      System.out.print("  ");
+    System.out.println(node.getName());
+    for(Attribute attribute : node.getAttributes()){
+      for(int i = 0; i < level; i++)
+        System.out.print("  ");
+      System.out.println(attribute.getName() + " = " + attribute.getValue());
+    }
+    for(TagNode child : node.getChildren())
+      printTree(child, level + 1);
   }
 
   //? Handlers
@@ -107,39 +113,63 @@ public class XMLParser {
 
           // If there is an equal sign, the next token must be a string 
           // ej. tag="value"
-          if(!tagTokens.isEmpty()&& tagTokens.peek().getType() == TokenType.EQUAL)
+          if(!tagTokens.isEmpty() && tagTokens.peek().getType() == TokenType.EQUAL)
             ErrorHandler.throwError("Invalid tag: expected attribute value", tokens.get(actual).getLine());
 
           // If the node name is null, the first token must be the name of the tag
           // ej. <tag>
           if(node.getName() == null)
             node.setName(tokens.get(actual).getLexeme());
-          else
+          else 
             tagTokens.push(tokens.get(actual)); // If the node name is not null, the token is an attribute
           break;
         case EQUAL:
           if(tagTokens.isEmpty())
-            ErrorHandler.throwError("Invalid tag: expected attribute name", tokens.get(actual).getLine());
+            ErrorHandler.throwError("Invalid tag: expected attribute name after " + tokens.get(actual).getLexeme(), tokens.get(actual).getLine());
           tagTokens.push(tokens.get(actual));
           break;
         case STRING:
           if(tagTokens.isEmpty())
-            ErrorHandler.throwError("Invalid tag: expected attribute value", tokens.get(actual).getLine());
+            ErrorHandler.throwError("Invalid tag: expected attribute value after " + tokens.get(actual).getLexeme(), tokens.get(actual).getLine());
           else if(tagTokens.peek().getType() != TokenType.EQUAL)
-            ErrorHandler.throwError("Invalid tag: expected equal sign", tokens.get(actual).getLine());
-          else 
-            tagTokens.pop();
-            node.addAttribute(new Attribute(tagTokens.pop().getLexeme(), tokens.get(actual).getLexeme()));
+            ErrorHandler.throwError("Invalid tag: expected equal sign before " + tokens.get(actual).getLexeme(), tokens.get(actual).getLine());
+
+          tagTokens.pop();
+          node.addAttribute(new Attribute(tagTokens.pop().getLexeme(), tokens.get(actual).getLexeme()));
           break;
         default:
           break;
       }
+
       advance();
-    }
+    } 
+
+    if(!tagTokens.isEmpty())
+      ErrorHandler.throwError("Don't recognized attribute: " + tagTokens.peek().getLexeme(), tokens.get(actual).getLine());
 
     if(!stack.empty())
       stack.peek().addChild(node);
+
+    if(root == null)
+      root = node;
     
     stack.push(node);
+  }
+
+  /**
+   * Method for handling close tags
+    */
+  public void handleCloseTag(){
+    advance(); // This is <
+    advance(); // This is /
+    
+    if(stack.empty())
+      ErrorHandler.throwError("Invalid tag: expected open tag", tokens.get(actual).getLine());
+
+    String name = tokens.get(actual).getLexeme();
+    TagNode node = stack.pop();
+
+    if(!node.getName().equals(name))
+      ErrorHandler.throwError("Invalid tag: expected " + node.getName() + " but found " + name, tokens.get(actual).getLine());
   }
 }
