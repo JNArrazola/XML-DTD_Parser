@@ -14,8 +14,12 @@ public class XMLParser {
   private ArrayList<Token> tokens;
   private TagNode root;
 
-  public ArrayList<TagNode> parse(ArrayList<Token> tokens){
-    ArrayList<TagNode> nodes = new ArrayList<TagNode>();
+  /**
+   * Parse the tokens and generate the tree structure
+   * @param tokens the tokens to parse
+   * @return TagNode, object that is positioned at the root of the tree
+    */  
+  public TagNode parse(ArrayList<Token> tokens){
     stack = new Stack<TagNode>();
     this.tokens = tokens;
     root = null;
@@ -37,15 +41,17 @@ public class XMLParser {
           } else 
             ErrorHandler.throwError("Invalid tag: expected name", tokens.get(actual).getLine());
           break;
-          
+        case TAG_VALUE:
+          handleTagValue();
+          break;
         default:
           break;
       }
       advance();
     }
 
-    printTree(root, 0);
-    return nodes;
+    // printTree(root, 0);
+    return root;
   }
 
   /* Auxiliar methods */
@@ -75,17 +81,26 @@ public class XMLParser {
 
   /**
    * Print the tree structure
-   * @param node
-   * @param level
+   * @param node the node to print
+   * @param level the level of the node
     */
-  private void printTree(TagNode node, int level){
+    public void printTree(TagNode node, int level){
     for(int i = 0; i < level; i++)
       System.out.print("  ");
     System.out.println(node.getName());
-    for(Attribute attribute : node.getAttributes()){
+    
+    if(node.getContent() != null){
       for(int i = 0; i < level; i++)
         System.out.print("  ");
-      System.out.println(attribute.getName() + " = " + attribute.getValue());
+      System.out.println("Content: " + node.getContent());
+    }
+
+    if(!node.getAttributes().isEmpty()){
+      for(Attribute attribute : node.getAttributes()){
+        for(int i = 0; i < level; i++)
+          System.out.print("  ");
+        System.out.println(attribute.getName() + " = " + attribute.getValue());
+      }
     }
     for(TagNode child : node.getChildren())
       printTree(child, level + 1);
@@ -140,7 +155,6 @@ public class XMLParser {
         default:
           break;
       }
-
       advance();
     } 
 
@@ -171,5 +185,15 @@ public class XMLParser {
 
     if(!node.getName().equals(name))
       ErrorHandler.throwError("Invalid tag: expected " + node.getName() + " but found " + name, tokens.get(actual).getLine());
+  }
+
+  public void handleTagValue(){
+    String value = tokens.get(actual).getLexeme() + " ";
+    
+    while(peek() != TokenType.OPEN_TAG){
+      advance();
+      value += tokens.get(actual).getLexeme() + " ";
+    }
+    stack.peek().setContent(value.trim());
   }
 }

@@ -12,8 +12,8 @@ import java.util.ArrayList;
  * Profesor: Dr. Said Polanco Martagon
  */
 public class App {
-  // private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex.xml";
-  private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/test.xml";
+  private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex.xml";
+  // private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex_with_tags.xml";
 
   public static void main(String[] args) {
     ArrayList<Token> token = null;
@@ -23,7 +23,7 @@ public class App {
       token = lexer.process(content);
 
       XMLParser parser = new XMLParser();
-      parser.parse(token);
+      TagNode root = parser.parse(token);
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }

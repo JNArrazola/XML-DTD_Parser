@@ -177,7 +177,7 @@ public class XMLLexer {
   public void consumeTagContent() {
     int start = actual;
 
-    while (!isAtEnd() && isAlphanumeric(peek()) || peek() == '-')
+    while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_'))
       advance();
     
     addToken(TokenType.TAG_CONTENT, input.substring(start, actual + 1));
@@ -186,7 +186,7 @@ public class XMLLexer {
   public void consumeTagValue(){
     int start = actual;
 
-    while (!isAtEnd() && isAlphanumeric(peek()))
+    while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_'))
       advance();
     
     addToken(TokenType.TAG_VALUE, input.substring(start, actual + 1));

@@ -53,7 +53,6 @@ public class TagNode {
 
     @Override
     public String toString() {
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         StringBuilder sb = new StringBuilder();
         sb.append(name);
         for (Attribute attribute : attributes) 
@@ -64,10 +63,9 @@ public class TagNode {
         else 
             sb.append(" content: null");
 
-        //for (TagNode child : children) {
-        //    child.toString();
-        //}
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        for (TagNode child : children) 
+            child.getName();
+        
         return sb.toString();
     }
 }
