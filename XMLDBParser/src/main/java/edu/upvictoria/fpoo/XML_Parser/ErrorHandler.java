@@ -13,7 +13,7 @@ public class ErrorHandler {
     }
 
     public static void throwError(String message, int line) {
-      throw new RuntimeException("Error at line " + line + ": " + message);
+      throw new RuntimeException("[Error at line] " + line + ": " + message);
     }
 
     /**
