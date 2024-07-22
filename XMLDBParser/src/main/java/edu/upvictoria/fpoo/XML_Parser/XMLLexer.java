@@ -2,7 +2,6 @@ package edu.upvictoria.fpoo.XML_Parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.nio.file.Path;
 
 /**
  * Lexer class
@@ -15,9 +14,10 @@ public class XMLLexer {
   private ArrayList<Token> tokens;
   private int line;
   private boolean openedTag = false;
-  private HashMap<String, TokenType> reservedWords = new HashMap<String, TokenType>();
+  private HashMap<String, TokenType> reservedWords;
 
   private void initialize(){
+    reservedWords = new HashMap<String, TokenType>();
     reservedWords.put("DOCTYPE", TokenType.DOCTYPE);
     reservedWords.put("SYSTEM", TokenType.SYSTEM);
   }
@@ -44,18 +44,18 @@ public class XMLLexer {
             ErrorHandler.throwError("Not closed tag: " + input.charAt(actual), line);
 
           openedTag = true;
-          tokens.add(new Token(TokenType.OPEN_TAG, "<", actual, actual, line));
+          tokens.add(new Token(TokenType.OPEN_TAG, "<", line));
           break;
         case '>':
           if (openedTag) {
-            tokens.add(new Token(TokenType.CLOSE_TAG, ">", actual, actual, line));
+            tokens.add(new Token(TokenType.CLOSE_TAG, ">", line));
             openedTag = false;
             break;
           } else 
             ErrorHandler.throwError("Not opened tag: ", line);
           break;
         case '=':
-          tokens.add(new Token(TokenType.EQUAL, "=", actual, actual, line));
+          tokens.add(new Token(TokenType.EQUAL, "=", line));
           break;
         case '"':
           handleString();
@@ -67,13 +67,13 @@ public class XMLLexer {
         case '\t':
           break;
         case '/':
-          tokens.add(new Token(TokenType.SLASH, "/", actual, actual, line));
+          tokens.add(new Token(TokenType.SLASH, "/", line));
           break;
         case '?':
-          tokens.add(new Token(TokenType.QUESTION_MARK, "?", actual, actual, line));
+          tokens.add(new Token(TokenType.QUESTION_MARK, "?", line));
           break;
         case '!':
-          tokens.add(new Token(TokenType.EXCLAMATION, "!", actual, actual, line));
+          tokens.add(new Token(TokenType.EXCLAMATION, "!", line));
           break;
         default:
           if (!isAlphanumeric(input.charAt(actual))) {
@@ -92,7 +92,7 @@ public class XMLLexer {
     if(openedTag)
       ErrorHandler.throwError("Tag not closed", line);
 
-    tokens.add(new Token(TokenType.EOF, "", actual, actual, line));
+    tokens.add(new Token(TokenType.EOF, "", line));
     return tokens;
   }
 
@@ -100,7 +100,7 @@ public class XMLLexer {
    * Add a token to the list of tokens
    */
   public void addToken(TokenType type, String value) {
-    tokens.add(new Token(type, value, actual, actual + value.length(), line));
+    tokens.add(new Token(type, value, line));
   }
 
   /**
@@ -108,7 +108,7 @@ public class XMLLexer {
    */
   private void advance() {
     if (actual == input.length())
-      tokens.add(new Token(TokenType.EOF, "", actual, actual, line));
+      tokens.add(new Token(TokenType.EOF, "", line));
 
     actual++;
   }
@@ -153,9 +153,10 @@ public class XMLLexer {
     advance(4);
     int start = actual;
     while (!(peek() == '-' && peek(2) == '-' && peek(3) == '>')) {
-      if (isAtEnd() || peek() == '\n')
+      if (isAtEnd())
         ErrorHandler.throwError("Comment not closed", line);
-
+      if(input.charAt(actual) == '\n')
+        line++;
       advance();
     }
     addToken(TokenType.COMMENT, input.substring(start, actual));
@@ -198,7 +199,7 @@ public class XMLLexer {
   public void consumeTagValue(){
     int start = actual;
 
-    while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_'))
+    while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_') || peek() == '.')
       advance();
     
     addToken(TokenType.TAG_VALUE, input.substring(start, actual + 1));

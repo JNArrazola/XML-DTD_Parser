@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table SYSTEM "detede.dtd">
+
+<table>
+  <name>users</name>
+  <columns>
+    <column>
+      <name>id</name>
+      <type>integer</type>
+      <length>11</length>
+      <constraints>
+        <constraint>primary key</constraint>
+        <constraint>not null</constraint>
+      </constraints>
+    </column>
+    <column>
+      <name>username</name>
+      <type>varchar</type>
+      <length>255</length>
+      <constraints>
+        <constraint>unique</constraint>
+        <constraint>not null</constraint>
+      </constraints>
+    </column>
+    <column>
+      <name>email</name>
+      <type>varchar</type>
+      <length>255</length>
+      <constraints>
+        <constraint>not null</constraint>
+      </constraints>
+    </column>
+  </columns>
+</table>
