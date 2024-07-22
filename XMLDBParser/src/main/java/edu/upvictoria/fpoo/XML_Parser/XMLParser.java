@@ -13,15 +13,20 @@ public class XMLParser {
   private Stack<TagNode> stack;
   private ArrayList<Token> tokens;
   private TagNode root;
+  private String dtd = null;
+  private String rootName = null;
 
   /**
    * Parse the tokens and generate the tree structure
    * @param tokens the tokens to parse
    * @return TagNode, object that is positioned at the root of the tree
     */  
-  public TagNode parse(ArrayList<Token> tokens){
+  public XMLTree parse(String path) throws Exception {
+    // Get the tokens
+    tokens = new XMLLexer(FileManagement.read(path)).process();
+    
+    // Initialize the stack and the root
     stack = new Stack<TagNode>();
-    this.tokens = tokens;
     root = null;
 
     while (getActualToken() != TokenType.EOF) {
@@ -31,8 +36,7 @@ public class XMLParser {
             handleTrash();
             break;
           } else if(peek() == TokenType.EXCLAMATION){
-            // TODO: This method is supposed to read the DTD
-            // handleDTDRelation(); 
+            handleDTDRelation(); 
             break;
           } else if(peek() == TokenType.SLASH){
             handleCloseTag();
@@ -44,14 +48,22 @@ public class XMLParser {
         case TAG_VALUE:
           handleTagValue();
           break;
+        case COMMENT:
+          break;
         default:
           break;
       }
       advance();
     }
 
+    if(!stack.empty())
+      ErrorHandler.throwError("Invalid tag: expected close tag", tokens.get(actual).getLine());
+
+    // System.out.println("Root: " + rootName);
+    // System.out.println("DTD: " + dtd);
     // printTree(root, 0);
-    return root;
+
+    return ((dtd != null) ? new XMLTree(root, dtd) : new XMLTree(root));
   }
 
   /* Auxiliar methods */
@@ -80,30 +92,28 @@ public class XMLParser {
   }
 
   /**
-   * Print the tree structure
-   * @param node the node to print
-   * @param level the level of the node
+   * Method for consuming a token
+   * @param expected the expected token
     */
-    public void printTree(TagNode node, int level){
-    for(int i = 0; i < level; i++)
-      System.out.print("  ");
-    System.out.println(node.getName());
-    
-    if(node.getContent() != null){
-      for(int i = 0; i < level; i++)
-        System.out.print("  ");
-      System.out.println("Content: " + node.getContent());
-    }
+  private void consume(TokenType expected){
+    if(getActualToken() != expected)
+      ErrorHandler.throwError("Invalid token: expected " + expected + " but found " + tokens.get(actual).getLexeme(), tokens.get(actual).getLine());
 
-    if(!node.getAttributes().isEmpty()){
-      for(Attribute attribute : node.getAttributes()){
-        for(int i = 0; i < level; i++)
-          System.out.print("  ");
-        System.out.println(attribute.getName() + " = " + attribute.getValue());
-      }
-    }
-    for(TagNode child : node.getChildren())
-      printTree(child, level + 1);
+    advance();
+  }
+
+  /**
+   * Method for consuming a token and return it
+   * @param expected the expected token
+   * @return Token
+    */
+  private Token consumeWReturn(TokenType expected){
+    if(getActualToken() != expected)
+      ErrorHandler.throwError("Invalid token: expected " + expected + " but found " + getActualToken(), tokens.get(actual).getLine());
+    
+    Token token = tokens.get(actual);
+    advance();
+    return token;
   }
 
   //? Handlers
@@ -116,8 +126,19 @@ public class XMLParser {
       advance();
   }
 
+  public void handleDTDRelation(){
+    consume(TokenType.OPEN_TAG);
+    consume(TokenType.EXCLAMATION);
+    consume(TokenType.DOCTYPE);
+
+    rootName = consumeWReturn(TokenType.TAG_CONTENT).getLexeme();
+
+    consume(TokenType.SYSTEM);
+    dtd = tokens.get(actual).getLexeme();
+  }
+
   private void handleOpenTag(){
-    advance();
+    consume(TokenType.OPEN_TAG);
     
     TagNode node = new TagNode();
     Stack<Token> tagTokens = new Stack<Token>();
@@ -127,12 +148,10 @@ public class XMLParser {
         case TAG_CONTENT:
 
           // If there is an equal sign, the next token must be a string 
-          // ej. tag="value"
           if(!tagTokens.isEmpty() && tagTokens.peek().getType() == TokenType.EQUAL)
             ErrorHandler.throwError("Invalid tag: expected attribute value", tokens.get(actual).getLine());
 
           // If the node name is null, the first token must be the name of the tag
-          // ej. <tag>
           if(node.getName() == null)
             node.setName(tokens.get(actual).getLexeme());
           else 
@@ -161,11 +180,22 @@ public class XMLParser {
     if(!tagTokens.isEmpty())
       ErrorHandler.throwError("Don't recognized attribute: " + tagTokens.peek().getLexeme(), tokens.get(actual).getLine());
 
-    if(!stack.empty())
-      stack.peek().addChild(node);
+    if(!stack.empty()){
 
-    if(root == null)
+      //! you can't add a child to a node that has content
+      if(stack.peek().getContent() != null)
+        ErrorHandler.throwError("Invalid tag: Can't add child to a node with content '" + stack.peek().getContent() + "'", tokens.get(actual).getLine());
+
+      stack.peek().addChild(node);
+    }
+
+    if(root == null){
       root = node;
+
+      // !DTD validation
+      if(rootName != null && !rootName.equals(node.getName()))
+        ErrorHandler.throwError("Invalid tag: expected root name '" + rootName + "' but found '" + node.getName() + "'", tokens.get(actual).getLine());
+    }
     
     stack.push(node);
   }
@@ -174,13 +204,13 @@ public class XMLParser {
    * Method for handling close tags
     */
   public void handleCloseTag(){
-    advance(); // This is <
-    advance(); // This is /
+    consume(TokenType.OPEN_TAG);
+    consume(TokenType.SLASH);
     
     if(stack.empty())
       ErrorHandler.throwError("Invalid tag: expected open tag", tokens.get(actual).getLine());
 
-    String name = tokens.get(actual).getLexeme();
+    String name = consumeWReturn(TokenType.TAG_CONTENT).getLexeme();
     TagNode node = stack.pop();
 
     if(!node.getName().equals(name))
@@ -189,11 +219,15 @@ public class XMLParser {
 
   public void handleTagValue(){
     String value = tokens.get(actual).getLexeme() + " ";
-    
+
+    if(stack.empty())
+      ErrorHandler.throwError("Not found tag: " + tokens.get(actual).getLexeme(), tokens.get(actual).getLine());
+
     while(peek() != TokenType.OPEN_TAG){
       advance();
       value += tokens.get(actual).getLexeme() + " ";
     }
+
     stack.peek().setContent(value.trim());
   }
 }

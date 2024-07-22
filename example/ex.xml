@@ -17,7 +17,7 @@
          </column>
          <column>
             <name>name</name>
-            <type>string</type>
+            <type>string</type>  
             <constraints>
                <constraint>not null</constraint>
             </constraints>

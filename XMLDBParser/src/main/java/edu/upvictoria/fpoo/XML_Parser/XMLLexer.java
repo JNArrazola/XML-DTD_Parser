@@ -1,6 +1,8 @@
 package edu.upvictoria.fpoo.XML_Parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.nio.file.Path;
 
 /**
  * Lexer class
@@ -13,12 +15,19 @@ public class XMLLexer {
   private ArrayList<Token> tokens;
   private int line;
   private boolean openedTag = false;
+  private HashMap<String, TokenType> reservedWords = new HashMap<String, TokenType>();
+
+  private void initialize(){
+    reservedWords.put("DOCTYPE", TokenType.DOCTYPE);
+    reservedWords.put("SYSTEM", TokenType.SYSTEM);
+  }
 
   public XMLLexer(String input) {
     this.input = input;
+    initialize();
   }
 
-  public ArrayList<Token> process(String input) throws Exception {
+  public ArrayList<Token> process() throws Exception {
     tokens = new ArrayList<Token>();
     line = 1;
     // Tokenize the input
@@ -180,7 +189,10 @@ public class XMLLexer {
     while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_'))
       advance();
     
-    addToken(TokenType.TAG_CONTENT, input.substring(start, actual + 1));
+    if(reservedWords.containsKey(input.substring(start, actual + 1)))
+      addToken(reservedWords.get(input.substring(start, actual + 1)), input.substring(start, actual + 1));
+    else
+      addToken(TokenType.TAG_CONTENT, input.substring(start, actual + 1));
   }
 
   public void consumeTagValue(){

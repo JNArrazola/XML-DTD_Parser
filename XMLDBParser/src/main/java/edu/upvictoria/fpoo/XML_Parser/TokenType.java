@@ -6,7 +6,7 @@ package edu.upvictoria.fpoo.XML_Parser;
   */
 enum TokenType {
     // Structure related tokens
-    OPEN_TAG, CLOSE_TAG, TAG_CONTENT, COMMENT, DOCTYPE, EOF,
+    OPEN_TAG, CLOSE_TAG, TAG_CONTENT, COMMENT, DOCTYPE, EOF, SYSTEM,
 
     // Content related tokens
     STRING, EQUAL, DOUBLE_QUOTE, SLASH, EXCLAMATION, QUESTION_MARK, TAG_VALUE

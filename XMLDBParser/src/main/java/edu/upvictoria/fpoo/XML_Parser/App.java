@@ -16,14 +16,10 @@ public class App {
   // private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex_with_tags.xml";
 
   public static void main(String[] args) {
-    ArrayList<Token> token = null;
     try {
-      String content = FileManagement.read(XML_FILE);
-      XMLLexer lexer = new XMLLexer(content);
-      token = lexer.process(content);
-
       XMLParser parser = new XMLParser();
-      TagNode root = parser.parse(token);
+      XMLTree tree = parser.parse(XML_FILE);
+      TreePrinter.printTree(tree.getRoot(), 0);
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
