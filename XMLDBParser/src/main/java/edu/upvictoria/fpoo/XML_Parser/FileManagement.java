@@ -11,8 +11,8 @@ public class FileManagement {
 
     /**
      * Function to read a file
-     * @param path
-     * @return
+     * @param path Path of the file to read
+     * @return String with the content of the file
      * @throws Exception
       */
     public static String read(String path) throws Exception {

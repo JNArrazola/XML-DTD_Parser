@@ -1,8 +1,8 @@
 <!ELEMENT table (name, columns)>
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT columns (column+)>
-<!ELEMENT column (name, type, length?, constraints?)>
+<!ELEMENT column (name, type, length?, constraints?)> 
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT length (#PCDATA)>
 <!ELEMENT constraints (constraint*)>
-<!ELEMENT constraint (#PCDATA)>
+<!ELEMENT constraint (#PCDATA)> 

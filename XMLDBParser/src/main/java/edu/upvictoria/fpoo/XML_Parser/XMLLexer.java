@@ -16,17 +16,29 @@ public class XMLLexer {
   private boolean openedTag = false;
   private HashMap<String, TokenType> reservedWords;
 
+  /**
+   * Method to initialize the reserved words
+    */
   private void initialize(){
     reservedWords = new HashMap<String, TokenType>();
     reservedWords.put("DOCTYPE", TokenType.DOCTYPE);
     reservedWords.put("SYSTEM", TokenType.SYSTEM);
   }
 
+  /**
+   * Constructor
+   * @param input Input to tokenize
+    */
   public XMLLexer(String input) {
     this.input = input;
     initialize();
   }
 
+  /**
+   * Method to tokenize the input
+   * @return ArrayList<Token> List of tokens
+   * @throws Exception If an error occurs
+    */
   public ArrayList<Token> process() throws Exception {
     tokens = new ArrayList<Token>();
     line = 1;
@@ -50,7 +62,6 @@ public class XMLLexer {
           if (openedTag) {
             tokens.add(new Token(TokenType.CLOSE_TAG, ">", line));
             openedTag = false;
-            break;
           } else 
             ErrorHandler.throwError("Not opened tag: ", line);
           break;
@@ -209,14 +220,29 @@ public class XMLLexer {
   // *************************************
   // ********************************************************************************
 
+  /**
+   * Method to check if a character is alphanumeric
+   * @param c Character to check
+   * @return boolean
+    */
   public boolean isAlphanumeric(char c) {
     return isLetter(c) || isDigit(c);
   }
 
+  /**
+   * Method to check if a character is a letter
+   * @param c Character to check
+   * @return boolean
+    */
   public boolean isLetter(char c) {
     return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
   }
 
+  /**
+   * Method to check if a character is a digit
+   * @param c Character to check
+   * @return boolean
+    */
   public boolean isDigit(char c) {
     return c >= '0' && c <= '9';
   }

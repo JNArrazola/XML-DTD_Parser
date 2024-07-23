@@ -7,29 +7,42 @@ import java.util.ArrayList;
  * Lexer class
   */
 public class DTDLexer {
-  private int actual = 0;
+  private int actual;
   private int line;
   private HashMap<String, TokenType> reservedWords;
   private String input;
   private ArrayList<Token> tokens;
 
+  /**
+   * Method to initialize the reserved words
+    */
   private void initialize(){
     reservedWords = new HashMap<String, TokenType>();
     reservedWords.put("ELEMENT", TokenType.ELEMENT);
     reservedWords.put("PCDATA", TokenType.PCDATA);
   }
 
+  /**
+   * Constructor
+   * @param input Input to tokenize
+    */
   public DTDLexer(String input) {
     this.input = input;
     initialize();
   }
 
-  public ArrayList<Token> process(){
+  /**
+   * Method to tokenize the input
+   * @return ArrayList<Token> List of tokens
+   * @throws Exception If an error occurs
+    */
+  public ArrayList<Token> process() throws Exception {
     if(input == null)
       ErrorHandler.throwError("Input is null");
     
-    tokens = new ArrayList<Token>();
-    line = 0;
+    tokens = new ArrayList<Token>(); // List of tokens
+    actual = 0; // Actual pointer
+    line = 0; // Line counter
 
     while (!isAtEnd()) {
       char c = input.charAt(actual);
@@ -107,7 +120,7 @@ public class DTDLexer {
    * @return
     */
   private char peek() {
-    if (actual < input.length())
+    if (actual + 1 < input.length())
       return input.charAt(actual + 1);
     return '\0';
   }
@@ -123,18 +136,27 @@ public class DTDLexer {
     return '\0';
   }
 
+  /**
+   * Function to handle comments
+    */
   private void handleComment() {
     advance(4);
     int start = actual;
     while (!(peek() == '-' && peek(2) == '-' && peek(3) == '>')) {
-      if (peek() == '\n')
+      if(isAtEnd())
+        ErrorHandler.throwError("Comment not closed", line);
+      
+      if (input.charAt(actual) == '\n')
         line++;
       advance();
     }
-    advance(3);
     tokens.add(new Token(TokenType.COMMENT, input.substring(start, actual), line));
+    advance(3);
   }
 
+  /**
+   * Function to handle reserved words
+    */
   private void handleReservedWord(){
     int start = actual;
 
@@ -148,6 +170,11 @@ public class DTDLexer {
       tokens.add(new Token(TokenType.STRING, word, line));
   }
 
+  /**
+   * Check if a character is alphanumeric
+   * @param c The character to check
+   * @return True if the character is alphanumeric, false otherwise
+    */
   private boolean isAlphanumeric(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
   }

@@ -5,10 +5,11 @@ package edu.upvictoria.fpoo.XML_Parser;
   */
 public class XMLTree {
     private TagNode root;
-    private String dtd = null;
+    private String dtd;
 
     public XMLTree(TagNode root) {
         this.root = root;
+        this.dtd = null;
     }
 
     public XMLTree(TagNode root, String dtd) {

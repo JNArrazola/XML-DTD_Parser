@@ -3,7 +3,8 @@ package edu.upvictoria.fpoo.DTDParser;
 import java.util.ArrayList;
 
 public class App {
-    private final static String DTDFILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/detede.dtd";
+    // private final static String DTDFILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/detede.dtd";
+    private final static String DTDFILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/dtdshorter.dtd";
     public static void main(String[] args) {
         ArrayList<Token> tokens = null;
         try {
