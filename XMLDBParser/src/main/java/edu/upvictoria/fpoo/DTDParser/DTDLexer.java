@@ -142,7 +142,7 @@ public class DTDLexer {
   private void handleComment() {
     advance(4);
     int start = actual;
-    while (!(peek() == '-' && peek(2) == '-' && peek(3) == '>')) {
+    while (!(peek() == '-' && peek(2) == '-' && peek(3) == '>')){
       if(isAtEnd())
         ErrorHandler.throwError("Comment not closed", line);
       
@@ -160,14 +160,23 @@ public class DTDLexer {
   private void handleReservedWord(){
     int start = actual;
 
-    while (isAlphanumeric(peek()))
+    while (isAlphanumeric(peek())){
+      if(isAtEnd())
+        ErrorHandler.throwError("Reserved word not closed", line);
+      
+      if(input.charAt(actual) == '\n')
+        line++;
+      
       advance();
+    }
+    
+    
     String word = input.substring(start, actual + 1);
     
     if (reservedWords.containsKey(word))
       tokens.add(new Token(reservedWords.get(word), word, line));
     else
-      tokens.add(new Token(TokenType.STRING, word, line));
+      tokens.add(new Token(TokenType.IDENTIFIER, word, line));
   }
 
   /**

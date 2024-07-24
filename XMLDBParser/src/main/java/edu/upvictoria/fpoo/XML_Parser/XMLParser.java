@@ -18,13 +18,13 @@ public class XMLParser {
 
   /**
    * Parse the tokens and generate the tree structure
-   * @param tokens the tokens to parse
-   * @return TagNode, object that is positioned at the root of the tree
+   * @param path Path to the XML file
+   * @return XMLTree The XML tree
     */  
   public XMLTree parse(String path) throws Exception {
     // Get the tokens
     tokens = new XMLLexer(FileManagement.read(path)).process();
-    
+
     // Initialize the stack and the root
     stack = new Stack<TagNode>();
     root = null;
@@ -63,7 +63,11 @@ public class XMLParser {
     // System.out.println("DTD: " + dtd);
     // printTree(root, 0);
 
-    return ((dtd != null) ? new XMLTree(root, dtd) : new XMLTree(root));
+    String dtdPath = null;
+    if(dtd != null)
+      dtdPath = path.substring(0, path.lastIndexOf("/")) + "/" + dtd;
+    System.out.println(dtdPath);
+    return ((dtd != null) ? new XMLTree(root, dtd, dtdPath) : new XMLTree(root));
   }
 
   /* Auxiliar methods */
@@ -73,6 +77,8 @@ public class XMLParser {
    * @return TokenType
     */
   private TokenType peek() {
+    if(actual + 1 >= tokens.size())
+      return TokenType.EOF;
     return tokens.get(actual + 1).getType();
   }
 
@@ -170,6 +176,9 @@ public class XMLParser {
 
           tagTokens.pop();
           node.addAttribute(new Attribute(tagTokens.pop().getLexeme(), tokens.get(actual).getLexeme()));
+          break;
+        case EOF:
+          ErrorHandler.throwError("Invalid tag: expected close tag", tokens.get(actual).getLine());
           break;
         default:
           break;

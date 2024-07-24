@@ -87,10 +87,10 @@ public class XMLLexer {
           tokens.add(new Token(TokenType.EXCLAMATION, "!", line));
           break;
         default:
-          if (!isAlphanumeric(input.charAt(actual))) {
+          /* if (!isAlphanumeric(input.charAt(actual))) {
             advance();
             break;
-          }
+          } */
 
           if(openedTag)
             consumeTagContent();
@@ -118,9 +118,6 @@ public class XMLLexer {
    * move the actual pointer to the next character
    */
   private void advance() {
-    if (actual == input.length())
-      tokens.add(new Token(TokenType.EOF, "", line));
-
     actual++;
   }
   
@@ -164,12 +161,11 @@ public class XMLLexer {
     advance(4);
     int start = actual;
     while (!(peek() == '-' && peek(2) == '-' && peek(3) == '>')) {
-      if (isAtEnd())
-        ErrorHandler.throwError("Comment not closed", line);
       if(input.charAt(actual) == '\n')
         line++;
       advance();
     }
+    
     addToken(TokenType.COMMENT, input.substring(start, actual));
     advance(3);
   }
@@ -180,12 +176,13 @@ public class XMLLexer {
   public void handleString() {
     advance();
     int start = actual;
-    while (input.charAt(actual) != '"') {
-      if (isAtEnd())
-        ErrorHandler.throwError("String not closed", line);
+    while (!isAtEnd()&&input.charAt(actual) != '"') {
       advance();
     }
 
+    if (isAtEnd())
+      ErrorHandler.throwError("String not closed", line);
+    
     if(isAlphanumeric(peek()))
       ErrorHandler.throwError("Invalid character in string: " + input.substring(start, actual), line);
 
@@ -212,6 +209,7 @@ public class XMLLexer {
 
     while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_') || peek() == '.')
       advance();
+    
     
     addToken(TokenType.TAG_VALUE, input.substring(start, actual + 1));
   }

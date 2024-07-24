@@ -11,5 +11,5 @@ enum TokenType {
     , STAR, PLUS, QUESTION, HASHTAG, EXCLAMATION, COMMA,
 
     // String
-    STRING
+    IDENTIFIER
 }

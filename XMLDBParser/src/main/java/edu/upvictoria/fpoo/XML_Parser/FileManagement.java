@@ -17,7 +17,7 @@ public class FileManagement {
       */
     public static String read(String path) throws Exception {
         if(!path.endsWith(".xml"))
-            return path;
+            throw new RuntimeException("Invalid file extension: " + path);
 
         // Read the file
         try(BufferedReader br = new BufferedReader(new FileReader(path.toString()))){
