@@ -2,7 +2,6 @@ package edu.upvictoria.fpoo.DTDParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import edu.upvictoria.fpoo.DTDParser.DTDRestrictions;
 
 public class DTDParser {
     private int actual; // Actual pointer
@@ -51,11 +50,24 @@ public class DTDParser {
                     if(peek() == TokenType.EXCLAMATION && peek(2) == TokenType.ELEMENT)
                         handleElement();
                     break;
+                case CLOSE_TAG:
+                    consume(TokenType.CLOSE_TAG);
+                    break;
+                case EOF:
+                    break;
                 default:
                     ErrorHandler.throwError("Invalid token: " + getActualToken());
                     break;
             }
         } 
+
+        for(String key : elements.keySet()){
+            System.out.println(key + "{ ");
+            for(Element e : elements.get(key)){
+                System.out.println("\t" + e);
+            }
+            System.out.println("}\n");
+        }
 
         return new DTDRestrictions(elements);
     }
@@ -65,7 +77,7 @@ public class DTDParser {
      * @return boolean if the actual pointer is at the end
       */
     private boolean isAtEnd() {
-        return actual >= tokens.size();
+        return tokens.get(actual).getType() == TokenType.EOF;
     }
 
     /**
@@ -89,21 +101,23 @@ public class DTDParser {
     private void handleElement() throws Exception {
         consume(TokenType.OPEN_TAG);
         consume(TokenType.EXCLAMATION);
-        String name = consumeWReturn(TokenType.ELEMENT).getLexeme();
+        consume(TokenType.ELEMENT);
 
-        if(elements.containsKey(name))
-            ErrorHandler.throwError("Element " + name + " already defined");
+        String name = null;
 
         while (!isAtEnd() && getActualToken() != TokenType.CLOSE_TAG) {
             switch (getActualToken()) {
                 case OPEN_PARENTHESIS:
+                    if(name == null)
+                        ErrorHandler.throwError("Expected but not found", tokens.get(actual).getLine());
+                    
                     handleOpenParenthesis(name);
                     break;
-                case CLOSE_TAG:
-                    consume(TokenType.CLOSE_TAG);
+                case IDENTIFIER: 
+                    name = consumeWReturn(TokenType.IDENTIFIER).getLexeme();
                     break;
                 default:
-                    ErrorHandler.throwError("Invalid token: " + getActualToken(), tokens.get(actual).getLine());
+                    ErrorHandler.throwError("Invalid token: " + tokens.get(actual).getLexeme(), tokens.get(actual).getLine());
                     break;
             }
         }
@@ -132,10 +146,16 @@ public class DTDParser {
                 case QUESTION: 
                 case STAR:
                 case PLUS:
+                    if(identifier == null)
+                        ErrorHandler.throwError("Identifier not defined", tokens.get(actual).getLine());
+                    
                     cardinality = tokens.get(actual).getLexeme();
                     advance();
                     break;
                 case COMMA:
+                    if(identifier == null)
+                        ErrorHandler.throwError("Identifier not defined", tokens.get(actual).getLine());
+
                     children.add(new Element(identifier, type, cardinality, required));
                     identifier = null;
                     type = null;
@@ -144,20 +164,40 @@ public class DTDParser {
                     advance();
                     break;
                 case HASHTAG: 
-                    if(peek() == TokenType.PCDATA)
-                        type = consumeWReturn(TokenType.PCDATA).getLexeme();
-                    else 
-                        ErrorHandler.throwError("Invalid token: Expected PCDATA but found " + getActualToken());
+                    consume(TokenType.HASHTAG);
+
+                    if(getActualToken() == TokenType.PCDATA){
+                        consume(TokenType.PCDATA);
+                        type = "PCDATA";
+                    } else if(getActualToken() == TokenType.REQUIRED){
+                        consume(TokenType.REQUIRED);
+                        required = true;
+                    } else 
+                        ErrorHandler.throwError("Invalid token: Expected PCDATA or REQUIRED but found '" + tokens.get(actual).getLexeme() + "'", tokens.get(actual).getLine());
+                    
+                    if(getActualToken() == TokenType.COMMA || !children.isEmpty())
+                        ErrorHandler.throwError("When using PCDATA or REQUIRED, no more elements are allowed", tokens.get(actual).getLine());
+                    
+                    break;
+                case PCDATA:
+                case REQUIRED:
+                    ErrorHandler.throwError("Expected HASHTAG before " + getActualToken(), tokens.get(actual).getLine());
+                    break;
+                case CLOSE_PARENTHESIS:
+                    break;
                 default:    
-                    ErrorHandler.throwError("Invalid token: " + getActualToken());
+                    ErrorHandler.throwError("Invalid token: " + getActualToken(), tokens.get(actual).getLine());
                     break;
             }
             
         }
 
-        if(identifier != null)
+        if(identifier != null || type != null || required != false)
             children.add(new Element(identifier, type, cardinality, required));
 
+        if(children.isEmpty())
+            ErrorHandler.throwError("No children found", tokens.get(actual).getLine());
+        
         consume(TokenType.CLOSE_PARENTHESIS);
         elements.put(id, children);
     }
@@ -168,7 +208,7 @@ public class DTDParser {
       */
     private void consume(TokenType expected){
         if(getActualToken() != expected)
-            ErrorHandler.throwError("Expected " + expected + " but found " + getActualToken());
+            ErrorHandler.throwError("Expected " + expected + " but found " + getActualToken(), tokens.get(actual).getLine());
         advance();
     }
 
@@ -179,7 +219,7 @@ public class DTDParser {
       */
     private Token consumeWReturn(TokenType expected){
         if(getActualToken() != expected)
-            ErrorHandler.throwError("Expected " + expected + " but found " + getActualToken());
+            ErrorHandler.throwError("Expected " + expected + " but found " + getActualToken(), tokens.get(actual).getLine());
         Token t = tokens.get(actual);
         advance();
         return t;

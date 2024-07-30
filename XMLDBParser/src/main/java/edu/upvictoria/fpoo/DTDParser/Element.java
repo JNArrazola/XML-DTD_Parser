@@ -40,7 +40,7 @@ public class Element {
         this.name = name;
         this.type = type;
         this.cardinality = cardinality;
-        this.required = false;
+        this.required = required;
         this.children = new ArrayList<Element>();
     }
 

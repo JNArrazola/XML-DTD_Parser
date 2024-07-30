@@ -20,6 +20,7 @@ public class DTDLexer {
     reservedWords = new HashMap<String, TokenType>();
     reservedWords.put("ELEMENT", TokenType.ELEMENT);
     reservedWords.put("PCDATA", TokenType.PCDATA);
+    reservedWords.put("REQUIRED", TokenType.REQUIRED);
   }
 
   /**
