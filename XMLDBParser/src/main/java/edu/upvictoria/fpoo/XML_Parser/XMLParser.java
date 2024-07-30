@@ -15,13 +15,46 @@ public class XMLParser {
   private TagNode root;
   private String dtd = null;
   private String rootName = null;
+  private String path = null;
 
+  // ********** Constructors **********
+  public XMLParser(String path){
+    this.path = path;
+  }
+
+  public XMLParser(){}
+
+  // ********** parse functions **********
+
+  /**
+   * Parse the XML file
+   * @param path Path to the XML file
+   * @return XMLTree The XML tree
+   * @throws Exception
+    */
+  public XMLTree parse(String path) throws Exception {
+    this.path = path;
+    return process();
+  }
+
+  /**
+   * Parse the XML file
+   * @return XMLTree The XML tree
+   * @throws Exception
+    */
+  public XMLTree parse() throws Exception {
+    if(path == null)
+      ErrorHandler.throwError("Path is null");
+    return process();
+  }
+
+  // ********** Parser functions **********
   /**
    * Parse the tokens and generate the tree structure
    * @param path Path to the XML file
    * @return XMLTree The XML tree
     */  
-  public XMLTree parse(String path) throws Exception {
+  private XMLTree process() throws Exception {
     // Get the tokens
     tokens = new XMLLexer(FileManagement.read(path)).process();
 

@@ -4,24 +4,39 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 /**
- * This class is an abstraction of the DTD file used to store the elements of the DTD file
- * It is certainly not needed but it was a little bit too chafa imho to return a hashmap of elements
- * when my main objective with this library is to encapsulate the DTD file and the XML file so the 
- * user doesn't have to worry about the structure of the files, just the code that they want to execute
- * - Joshua
-  */
-
-/**
  * Class to store the restrictions of the DTD file
   */
 public class DTDRestrictions {
-    private HashMap<String, ArrayList<Element>> elements;
+    private final HashMap<String, ArrayList<Element>> elements;
 
+    /**
+     * Constructor
+     * @param elements the elements of the DTD file
+      */
     public DTDRestrictions(HashMap<String, ArrayList<Element>> elements) {
         this.elements = elements;
     }
 
+    /**
+     * Get the elements of the DTD file
+     * @return HashMap<String, ArrayList<Element>> the elements of the DTD file
+      */
     public HashMap<String, ArrayList<Element>> getElements() {
         return elements;
+    }
+
+    /**
+     * Print the elements of the DTD file
+      */
+    public void printElements() {
+        if(elements == null) 
+            ErrorHandler.throwError("No elements to print");
+        
+        for (String key : elements.keySet()) {
+            System.out.println("Element: " + key);
+            for (Element element : elements.get(key)) {
+                System.out.println("  " + element);
+            }
+        }
     }
 }
