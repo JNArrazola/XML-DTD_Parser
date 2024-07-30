@@ -28,7 +28,15 @@ public class Element {
         this.required = required;
     }
 
-    public Element(String name, String type, String cardinality) {
+    public Element(String name) {
+        this.name = name;
+        this.children = new ArrayList<Element>();
+        this.required = false;
+        this.cardinality = null;
+        this.type = null;
+    }
+
+    public Element(String name, String type, String cardinality, boolean required) {
         this.name = name;
         this.type = type;
         this.cardinality = cardinality;

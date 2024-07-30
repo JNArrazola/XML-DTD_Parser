@@ -42,7 +42,7 @@ public class DTDLexer {
     
     tokens = new ArrayList<Token>(); // List of tokens
     actual = 0; // Actual pointer
-    line = 0; // Line counter
+    line = 1; // Line counter
 
     while (!isAtEnd()) {
       char c = input.charAt(actual);

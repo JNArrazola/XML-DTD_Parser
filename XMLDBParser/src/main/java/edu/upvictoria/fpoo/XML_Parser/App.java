@@ -21,6 +21,7 @@ public class App {
     try {
       XMLParser parser = new XMLParser();
       XMLTree tree = parser.parse(XML_FILE);
+      TreePrinter.printTree(tree.getRoot(), 0);
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }

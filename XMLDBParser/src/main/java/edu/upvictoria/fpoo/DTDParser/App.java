@@ -17,6 +17,8 @@ public class App {
             XMLParser xmlParser = new XMLParser(); // XMLParser object
             XMLTree xmlTree = xmlParser.parse(XML_FILE); // Parse the XML file
 
+            // TreePrinter.printTree(xmlTree.getRoot(), 0);
+
             DTDParser dtdParser = new DTDParser(); // DTDParser object
             DTDRestrictions dtdRestrictions = dtdParser.parse(xmlTree.getPath()); // Parse the DTD file
         } catch (Exception e) {

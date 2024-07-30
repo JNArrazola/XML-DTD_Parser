@@ -2,14 +2,13 @@ package edu.upvictoria.fpoo.DTDParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import edu.upvictoria.fpoo.DTDParser.DTDRestrictions;
 
 public class DTDParser {
     private int actual; // Actual pointer
     private ArrayList<Token> tokens; // List of tokens
     private String dtdPath; // Path of the DTD file
-    private HashMap<String, Element> elements; // Elements of the DTD file
+    private HashMap<String, ArrayList<Element>> elements; // Elements of the DTD file
 
     /**
      * Method to initialize the parser
@@ -18,7 +17,7 @@ public class DTDParser {
         if(tokens == null)
             ErrorHandler.throwError("No tokens to parse");
         
-        elements = new HashMap<String, Element>();
+        elements = new HashMap<String, ArrayList<Element>>();
     }
 
     /**
@@ -26,7 +25,7 @@ public class DTDParser {
      * @param path the path of the DTD file
      * @return DTDRestrictions the restrictions of the DTD file
       */
-    public DTDRestrictions parse(String path) {
+    public DTDRestrictions parse(String path) throws Exception {
         this.dtdPath = path;
 
         if(dtdPath == null)
@@ -50,9 +49,10 @@ public class DTDParser {
             switch (getActualToken()) {
                 case OPEN_TAG:
                     if(peek() == TokenType.EXCLAMATION && peek(2) == TokenType.ELEMENT)
-                        // handleElement();
+                        handleElement();
                     break;
                 default:
+                    ErrorHandler.throwError("Invalid token: " + getActualToken());
                     break;
             }
         } 
@@ -86,20 +86,80 @@ public class DTDParser {
     /**
      * Handle element in the DTD
       */
-    private void handleElement(){
+    private void handleElement() throws Exception {
         consume(TokenType.OPEN_TAG);
         consume(TokenType.EXCLAMATION);
-        consume(TokenType.ELEMENT);
+        String name = consumeWReturn(TokenType.ELEMENT).getLexeme();
 
+        if(elements.containsKey(name))
+            ErrorHandler.throwError("Element " + name + " already defined");
 
+        while (!isAtEnd() && getActualToken() != TokenType.CLOSE_TAG) {
+            switch (getActualToken()) {
+                case OPEN_PARENTHESIS:
+                    handleOpenParenthesis(name);
+                    break;
+                case CLOSE_TAG:
+                    consume(TokenType.CLOSE_TAG);
+                    break;
+                default:
+                    ErrorHandler.throwError("Invalid token: " + getActualToken(), tokens.get(actual).getLine());
+                    break;
+            }
+        }
+        
+        
     }
 
-    /**
-     * Handle parenthesis in the DTD
-     * @param actualToken the actual token that we are handling
-      */
-    private void handleParenthesis(Element actualToken){
+    private void handleOpenParenthesis(String id) throws Exception {
+        consume(TokenType.OPEN_PARENTHESIS);
+        ArrayList<Element> children = new ArrayList<Element>();
         
+        String identifier = null;
+        String type = null;
+        String cardinality = null;
+        boolean required = false;
+
+        while (!isAtEnd() && getActualToken() != TokenType.CLOSE_PARENTHESIS) {
+            switch (getActualToken()) {
+                case IDENTIFIER:
+                    if(identifier != null)
+                        ErrorHandler.throwError("Identifier already defined");
+                    
+                    identifier = consumeWReturn(TokenType.IDENTIFIER).getLexeme();
+                    break;
+                case EXCLAMATION:
+                case QUESTION: 
+                case STAR:
+                case PLUS:
+                    cardinality = tokens.get(actual).getLexeme();
+                    advance();
+                    break;
+                case COMMA:
+                    children.add(new Element(identifier, type, cardinality, required));
+                    identifier = null;
+                    type = null;
+                    cardinality = null;
+                    required = false;
+                    advance();
+                    break;
+                case HASHTAG: 
+                    if(peek() == TokenType.PCDATA)
+                        type = consumeWReturn(TokenType.PCDATA).getLexeme();
+                    else 
+                        ErrorHandler.throwError("Invalid token: Expected PCDATA but found " + getActualToken());
+                default:    
+                    ErrorHandler.throwError("Invalid token: " + getActualToken());
+                    break;
+            }
+            
+        }
+
+        if(identifier != null)
+            children.add(new Element(identifier, type, cardinality, required));
+
+        consume(TokenType.CLOSE_PARENTHESIS);
+        elements.put(id, children);
     }
 
     /**

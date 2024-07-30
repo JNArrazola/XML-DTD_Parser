@@ -11,7 +11,7 @@ public class ErrorHandler {
      * @param line Line where the error is located
       */
     public static void throwError(String message, int line) {
-        System.out.println("[Error at line " + line + "] " + message);
+        throw new RuntimeException("[Error at line " + line + "] " + message);
     }
 
     /**
@@ -19,6 +19,6 @@ public class ErrorHandler {
      * @param message Message to show
       */
     public static void throwError(String message) {
-        System.out.println("[Error] " + message);
+        throw new RuntimeException("[Error] " + message);
     }
 }
