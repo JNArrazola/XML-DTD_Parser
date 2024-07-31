@@ -7,30 +7,23 @@ package edu.upvictoria.fpoo.XML_Parser;
   */
 public class XMLTree {
     private TagNode root;
-    private String dtd;
-    private String path;
+    private String dtdPath;
 
     public XMLTree(TagNode root) {
         this.root = root;
-        this.dtd = null;
-        this.path = null;
+        this.dtdPath = null;
     }
 
-    public XMLTree(TagNode root, String dtd, String path) {
+    public XMLTree(TagNode root, String dtdPath) {
         this.root = root;
-        this.dtd = dtd;
-        this.path = path;
+        this.dtdPath = dtdPath;
     }
 
     public TagNode getRoot() {
         return root;
     }
 
-    public String getDtd() {
-        return dtd;
-    }
-    
-    public String getPath() {
-        return path;
+    public String getDtdPath() {
+        return dtdPath;
     }
 }

@@ -99,8 +99,8 @@ public class XMLParser {
     String dtdPath = null;
     if(dtd != null)
       dtdPath = path.substring(0, path.lastIndexOf("/")) + "/" + dtd;
-    System.out.println(dtdPath);
-    return ((dtd != null) ? new XMLTree(root, dtd, dtdPath) : new XMLTree(root));
+    // System.out.println(dtdPath);
+    return ((dtd != null) ? new XMLTree(root, dtdPath) : new XMLTree(root));
   }
 
   /* Auxiliar methods */

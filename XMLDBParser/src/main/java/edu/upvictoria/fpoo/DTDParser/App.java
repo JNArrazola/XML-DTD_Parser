@@ -18,8 +18,8 @@ public class App {
             XMLTree xmlTree = xmlParser.parse(XML_FILE); // Parse the XML file
             // TreePrinter.printTree(xmlTree.getRoot(), 0);
 
-            DTDParser dtdParser = new DTDParser(); // DTDParser object
-            DTDRestrictions dtdRestrictions = dtdParser.parse(xmlTree.getPath()); // Parse the DTD file
+            DTDParser dtdParser = new DTDParser(xmlTree.getDtdPath()); // DTDParser object
+            DTDRestrictions dtdRestrictions = dtdParser.parse(); // Parse the DTD file
 
             DTDInterpreter dtdInterpreter = new DTDInterpreter(xmlTree, dtdRestrictions); // DTDInterpreter object
             dtdInterpreter.interpret(); // Interpret the DTD file
