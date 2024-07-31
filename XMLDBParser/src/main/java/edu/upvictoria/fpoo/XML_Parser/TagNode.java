@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 /**
  * TagNode class to represent the nodes of the XML file.
- * ej. <tag attribute="value">content</tag>, all the tags are nodes.
   */
 public class TagNode {
     private String name; // Tag name
