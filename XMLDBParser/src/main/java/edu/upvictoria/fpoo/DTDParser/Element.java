@@ -8,15 +8,15 @@ import java.util.ArrayList;
 public class Element {
     private String name;
     private String type;
-    private String cardinality;
+    private char cardinality;
     private boolean required;
     private ArrayList<Element> children;
 
-    public String getCardinality() {
+    public char getCardinality() {
         return cardinality;
     }
 
-    public void setCardinality(String cardinality) {
+    public void setCardinality(char cardinality) {
         this.cardinality = cardinality;
     }
 
@@ -32,11 +32,11 @@ public class Element {
         this.name = name;
         this.children = new ArrayList<Element>();
         this.required = false;
-        this.cardinality = null;
+        this.cardinality = '\0';
         this.type = null;
     }
 
-    public Element(String name, String type, String cardinality, boolean required) {
+    public Element(String name, String type, char cardinality, boolean required) {
         this.name = name;
         this.type = type;
         this.cardinality = cardinality;

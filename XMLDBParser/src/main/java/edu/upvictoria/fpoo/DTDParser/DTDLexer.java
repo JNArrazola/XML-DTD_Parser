@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 /**
- * Lexer class
+ * Lexer class to tokenize the DTD file
   */
 public class DTDLexer {
   private int actual;

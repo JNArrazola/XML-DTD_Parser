@@ -170,7 +170,7 @@ public class DTDParser {
         
         String identifier = null;
         String type = null;
-        String cardinality = null;
+        char cardinality = '\0';
         boolean required = false;
 
         while (!isAtEnd() && getActualToken() != TokenType.CLOSE_PARENTHESIS) {
@@ -181,14 +181,13 @@ public class DTDParser {
                     
                     identifier = consumeWReturn(TokenType.IDENTIFIER).getLexeme();
                     break;
-                case EXCLAMATION:
                 case QUESTION: 
                 case STAR:
                 case PLUS:
                     if(identifier == null)
                         ErrorHandler.throwError("Identifier not defined", tokenLine());
                     
-                    cardinality = tokenLexeme();
+                    cardinality = tokenLexeme().charAt(0);
                     advance();
                     break;
                 case COMMA:
@@ -198,7 +197,7 @@ public class DTDParser {
                     children.add(new Element(identifier, type, cardinality, required));
                     identifier = null;
                     type = null;
-                    cardinality = null;
+                    cardinality = '\0';
                     required = false;
                     advance();
                     break;
