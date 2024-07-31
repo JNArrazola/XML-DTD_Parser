@@ -13,7 +13,7 @@ public class DTDParser {
     private HashMap<String, ArrayList<Element>> elements; // Elements of the DTD file
 
     /**
-     * Constructor
+     * Constructor without path
       */
     public DTDParser(){}
 

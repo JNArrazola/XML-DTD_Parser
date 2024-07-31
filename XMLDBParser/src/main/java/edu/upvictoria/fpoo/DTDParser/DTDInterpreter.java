@@ -2,6 +2,7 @@ package edu.upvictoria.fpoo.DTDParser;
 
 import edu.upvictoria.fpoo.XML_Parser.TagNode;
 import edu.upvictoria.fpoo.XML_Parser.XMLTree;
+import java.util.HashSet;
 import java.util.ArrayList;
 
 /**
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 public class DTDInterpreter {
     private XMLTree xmlTree;
     private DTDRestrictions dtdRestrictions;
+    private HashSet<String> hashSet;
 
     // ********** Constructors **********
     /**
@@ -57,6 +59,8 @@ public class DTDInterpreter {
 
         if(dtdRestrictions == null)
             ErrorHandler.throwError("No DTD restrictions to interpret");
+        
+        hashSet = new HashSet<String>();
     }
 
     /**
@@ -69,6 +73,7 @@ public class DTDInterpreter {
         // Necesito recorrer cada elemento
         for(String key : dtdRestrictions.getElements().keySet()){
             ArrayList<TagNode> nodes = dfsSearchByName(key);
+            hashSet.add(key);
 
             if(nodes.size() == 0)
                 ErrorHandler.throwError("Element " + key + " not found, but defined in DTD");
@@ -108,6 +113,7 @@ public class DTDInterpreter {
                 }
             }
         }
+        verifyRules(xmlTree.getRoot());
     }
     
     /**
@@ -129,7 +135,7 @@ public class DTDInterpreter {
     /**
      * Method to search a node by name using depth first search algorithm
      * @param name the name to search
-     * @return ArrayList<TagNode> the nodes found
+     * @return ArrayList the nodes found
       */
     private ArrayList<TagNode> dfsSearchByName(String name){
         ArrayList<TagNode> nodes = new ArrayList<TagNode>();
@@ -153,4 +159,18 @@ public class DTDInterpreter {
         for(TagNode child : node.getChildren())
             dfs(child, name, nodes);
     }   
+
+    /**
+     * Method to look through the tree in order to see if all nodes have defined rules
+      */
+    private void verifyRules(TagNode node){
+        if(node == null)
+            return;
+        
+        if(!hashSet.contains(node.getName()))
+            ErrorHandler.throwError("Element " + node.getName() + " not defined in DTD");
+
+        for(TagNode child : node.getChildren())
+            verifyRules(child);
+    }
 }
