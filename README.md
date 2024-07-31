@@ -125,3 +125,53 @@ Se puede enviar la ruta del archivo **DTD** al constructor, y después llamar al
 DTDParser dtdParser = new DTDParser(xmlTree.getDtdPath()); 
 DTDRestrictions dtdRestrictions = dtdParser.parse(); 
 ```
+
+## Interpretación del archivo
+Una vez *instanciado* y *parseado* el archivo, es necesario pasar a un último paso, que es **interpretar** las reglas obtenidas. Para ello se utiliza la clase `DTDInterpreter`, que puede instanciarse de dos formas: 
+1. Un **constructor** que recibe un árbol de tipo `XMLTree` obtenido por el **parser** XML, así como también un objeto `DTDRestrictions`, obtenido por el **parser** DTD:
+```java
+/**
+ * Constructor with XML tree and DTD restrictions as parameters
+ * @param xmlTree the XML tree
+ * @param dtdRestrictions the restrictions of the DTD file
+  */
+public DTDInterpreter(XMLTree xmlTree, DTDRestrictions dtdRestrictions) {
+    this.xmlTree = xmlTree;
+    this.dtdRestrictions = dtdRestrictions;
+}
+```
+2. Un **constructor** vacío, que sirve solamente para instanciar el objeto: 
+```java
+/**
+ * Constructor
+  */
+public DTDInterpreter() {}
+```
+Por último, para interpretar las reglas, es necesario llamar al método `interpret()`, de la clase `DTDInterpreter`, que también puede recibir el árbol `XMLTree` y `DTDRestrictions` si es que no fueron enviados al constructor antes.
+### Ejemplos de uso:
+#### Ejemplo #1:
+En este ejemplo, se envía el objeto `XMLTree` y el objeto `DTDRestrictions` al **constructor** y posteriormente se llama al método `interpret()`.
+```java
+DTDInterpreter dtdInterpreter = new DTDInterpreter(xmlTree, dtdRestrictions); 
+dtdInterpreter.interpret(); 
+```
+#### Ejemplo #2:
+Primero, se instancia el objeto y posteriormente, en el método `interpret()`, se envían los parámetros necesarios: 
+```java
+DTDInterpreter dtdInterpreter = new DTDInterpreter(); 
+dtdInterpreter.interpret(xmlTree, dtdRestrictions); 
+```
+
+## Ejemplo completo de uso
+```java
+XMLParser xmlParser = new XMLParser(); // Objeto del parser XML
+XMLTree xmlTree = xmlParser.parse(XML_FILE); // Método parse() que retorna un objeto XMLTree
+TreePrinter.printTree(xmlTree.getRoot(), 0);
+
+DTDParser dtdParser = new DTDParser(); // Objeto parser DTD
+DTDRestrictions dtdRestrictions = dtdParser.parse(xmlTree.getDtdPath()); // Método parse() que retorna un objeto DTDRestrictions
+
+DTDInterpreter dtdInterpreter = new DTDInterpreter(); // Objeto interpréte del DTD
+dtdInterpreter.interpret(xmlTree, dtdRestrictions); // Método interpret() que interpreta el archivo DTD y XML a la vez
+```
+Todo esto está pensado para ir dentro de un bloque **TryCatch**, si no se produce ninguna excepción durante la ejecución de dicho bloque, quiere decir que tanto el archivo `XML` como el `DTD` son totalmente correctos.
