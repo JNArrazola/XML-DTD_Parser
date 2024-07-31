@@ -8,7 +8,6 @@ import java.io.FileReader;
  *  This class is responsible for managing the files in the system.
   */
 public class FileManagement {
-
     /**
      * Function to read a file
      * @param path Path of the file to read

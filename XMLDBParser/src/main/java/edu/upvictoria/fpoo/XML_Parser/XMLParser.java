@@ -18,14 +18,20 @@ public class XMLParser {
   private String path = null;
 
   // ********** Constructors **********
+  /**
+   * Constructor with path
+   * @param path Path to the XML file
+    */
   public XMLParser(String path){
     this.path = path;
   }
 
+  /**
+   * Constructor without path
+    */
   public XMLParser(){}
 
   // ********** parse functions **********
-
   /**
    * Parse the XML file
    * @param path Path to the XML file
@@ -107,7 +113,7 @@ public class XMLParser {
 
   /**
    * Check next token type respecting the actual token
-   * @return TokenType
+   * @return TokenType the next token type
     */
   private TokenType peek() {
     if(actual + 1 >= tokens.size())
@@ -117,7 +123,7 @@ public class XMLParser {
 
   /**
    * get the actual token type
-   * @return TokenType
+   * @return TokenType the actual token type
     */
   private TokenType getActualToken(){
     return tokens.get(actual).getType();

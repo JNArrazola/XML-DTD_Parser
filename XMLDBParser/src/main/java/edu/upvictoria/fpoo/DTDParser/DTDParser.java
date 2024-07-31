@@ -3,6 +3,9 @@ package edu.upvictoria.fpoo.DTDParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class to parse the DTD file
+  */
 public class DTDParser {
     private int actual; // Actual pointer
     private ArrayList<Token> tokens; // List of tokens

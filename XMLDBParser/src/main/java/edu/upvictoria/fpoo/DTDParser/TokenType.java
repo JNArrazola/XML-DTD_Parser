@@ -1,6 +1,9 @@
 package edu.upvictoria.fpoo.DTDParser;
 
-enum TokenType {
+/**
+ * Enum to represent the type of the token
+  */
+public enum TokenType {
     // Structure related tokens
     OPEN_TAG, CLOSE_TAG, OPEN_PARENTHESIS, CLOSE_PARENTHESIS, COMMENT, EOF,
 

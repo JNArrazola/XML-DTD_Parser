@@ -2,7 +2,6 @@ package edu.upvictoria.fpoo.XML_Parser;
 
 /**
  * Attribute class to store the attributes of the XML file.
- * ej. <tag attribute="value">content</tag>
   */
 public class Attribute {
     private final String name; // Attribute name
@@ -18,14 +17,26 @@ public class Attribute {
         this.value = value;
     }
 
+    /**
+     * Get the name of the attribute
+     * @return String the name of the attribute
+      */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the value of the attribute
+     * @return String the value of the attribute
+      */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Method to print the attribute
+     * @return String the attribute
+      */
     @Override
     public String toString() {
         return "Attribute{" +

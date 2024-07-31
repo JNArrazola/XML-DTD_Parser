@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 /**
  * Lexer class
- * 
  * The Lexer class is responsible for tokenizing the input XML file.
  */
 public class XMLLexer {
@@ -19,7 +18,7 @@ public class XMLLexer {
   /**
    * Method to initialize the reserved words
     */
-  private void initialize(){
+  private void init(){
     reservedWords = new HashMap<String, TokenType>();
     reservedWords.put("DOCTYPE", TokenType.DOCTYPE);
     reservedWords.put("SYSTEM", TokenType.SYSTEM);
@@ -31,7 +30,7 @@ public class XMLLexer {
     */
   public XMLLexer(String input) {
     this.input = input;
-    initialize();
+    init();
   }
 
   /**

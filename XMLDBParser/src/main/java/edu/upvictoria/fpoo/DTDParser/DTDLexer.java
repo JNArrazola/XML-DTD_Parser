@@ -16,7 +16,7 @@ public class DTDLexer {
   /**
    * Method to initialize the reserved words
     */
-  private void initialize(){
+  private void init(){
     reservedWords = new HashMap<String, TokenType>();
     reservedWords.put("ELEMENT", TokenType.ELEMENT);
     reservedWords.put("PCDATA", TokenType.PCDATA);
@@ -29,12 +29,12 @@ public class DTDLexer {
     */
   public DTDLexer(String input) {
     this.input = input;
-    initialize();
+    init();
   }
 
   /**
    * Method to tokenize the input
-   * @return ArrayList<Token> List of tokens
+   * @return ArrayList List of tokens
    * @throws Exception If an error occurs
     */
   public ArrayList<Token> process() throws Exception {
@@ -138,7 +138,7 @@ public class DTDLexer {
   }
 
   /**
-   * Function to handle comments
+   * Function to handle comments (i.e. ignoring them)
     */
   private void handleComment() {
     advance(4);
@@ -156,7 +156,7 @@ public class DTDLexer {
   }
 
   /**
-   * Function to handle reserved words
+   * Function to handle reserved words (i.e. ELEMENT, PCDATA, REQUIRED)
     */
   private void handleReservedWord(){
     int start = actual;
@@ -170,7 +170,6 @@ public class DTDLexer {
       
       advance();
     }
-    
     
     String word = input.substring(start, actual + 1);
     
