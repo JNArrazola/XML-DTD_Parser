@@ -1,6 +1,7 @@
 package edu.upvictoria.fpoo.XMLParser;
 
 import java.util.ArrayList;
+import edu.upvictoria.fpoo.XMLParser.TagNode;
 
 public class App {
   // private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex.xml";

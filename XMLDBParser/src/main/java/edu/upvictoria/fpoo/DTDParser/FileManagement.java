@@ -11,8 +11,8 @@ public class FileManagement {
     /**
      * Function to read a file
      * @param path
-     * @return
-     * @throws Exception
+     * @return String with the content of the file
+     * @throws Exception if the file does not exist or it is invalid
       */
     public static String read(String path) throws Exception {
         if(path == null)

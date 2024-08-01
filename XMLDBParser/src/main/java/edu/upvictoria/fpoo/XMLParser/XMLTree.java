@@ -1,5 +1,7 @@
 package edu.upvictoria.fpoo.XMLParser;
 
+import java.util.ArrayList;
+
 /**
  * XMLTree class
  * This class is responsible for managing the XML tree.
@@ -42,5 +44,32 @@ public class XMLTree {
       */
     public String getDtdPath() {
         return dtdPath;
+    }
+
+    //***** Search methods *****
+    /**
+     * Method to search some nodes in the tree
+     * @param tagName the name of the tag to search
+     * @return ArrayList the list of nodes found
+      */
+    public ArrayList<TagNode> search(String tagName) {
+      ArrayList<TagNode> result = new ArrayList<>();
+
+      dfs(tagName, root, result);
+      return result;
+    }
+
+    /**
+     * Method to search some nodes in the tree using DFS algorithm
+     * @param name the name of the tag to search
+     * @param node the node to search
+     * @param result the list of nodes found
+      */
+    private void dfs(String name, TagNode node, ArrayList<TagNode> result) {
+      if(node == null) return;
+      if(node.getName().equals(name)) result.add(node);
+
+      for(TagNode child : node.getChildren()) 
+        dfs(name, child, result);
     }
 }
