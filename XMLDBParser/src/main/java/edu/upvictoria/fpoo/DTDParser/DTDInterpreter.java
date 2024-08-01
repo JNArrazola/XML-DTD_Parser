@@ -1,8 +1,10 @@
 package edu.upvictoria.fpoo.DTDParser;
 
-import edu.upvictoria.fpoo.XML_Parser.TagNode;
-import edu.upvictoria.fpoo.XML_Parser.XMLTree;
 import java.util.HashSet;
+
+import edu.upvictoria.fpoo.XMLParser.TagNode;
+import edu.upvictoria.fpoo.XMLParser.XMLTree;
+
 import java.util.ArrayList;
 
 /**

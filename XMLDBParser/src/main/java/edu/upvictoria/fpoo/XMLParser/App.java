@@ -1,11 +1,12 @@
-package edu.upvictoria.fpoo.XML_Parser;
+package edu.upvictoria.fpoo.XMLParser;
 
 import java.util.ArrayList;
 
 public class App {
   // private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex.xml";
   // private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/example3.xml";
-  private static final String XML_FILE = "/home/jarrazola/Documents/XML-DTD_Parser/example/table.xml";
+  // private static final String XML_FILE = "/home/jarrazola/Documents/XML-DTD_Parser/example/table.xml";
+  private static final String XML_FILE = "/home/jarrazola/Documents/XML-DTD_Parser/example/pascal_voc.xml";
   // private static final String XML_FILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/ex_with_tags.xml";
 
   public static void main(String[] args) {

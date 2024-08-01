@@ -1,10 +1,12 @@
 package edu.upvictoria.fpoo.DTDParser;
 
+import edu.upvictoria.fpoo.XMLParser.TreePrinter;
+import edu.upvictoria.fpoo.XMLParser.XMLParser;
+import edu.upvictoria.fpoo.XMLParser.XMLTree;
 
-import edu.upvictoria.fpoo.XML_Parser.TreePrinter;
-import edu.upvictoria.fpoo.XML_Parser.XMLParser;
-import edu.upvictoria.fpoo.XML_Parser.XMLTree;
-
+/**
+ * App class
+ */
 public class App {
     // private static final String DTDFILE = "/home/jarrazola/Documents/iti-271215-poo-practica-5-JNArrazola/example/detede.dtd";
     private static final String DTDFILE = "/home/jarrazola/Documents/XML-DTD_Parser/example/detede.dtd";

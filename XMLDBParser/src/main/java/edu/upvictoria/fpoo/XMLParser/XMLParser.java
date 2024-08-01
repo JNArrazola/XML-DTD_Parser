@@ -1,4 +1,4 @@
-package edu.upvictoria.fpoo.XML_Parser;
+package edu.upvictoria.fpoo.XMLParser;
 
 import java.util.ArrayList;
 import java.util.Stack;

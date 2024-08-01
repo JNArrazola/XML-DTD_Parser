@@ -1,4 +1,4 @@
-package edu.upvictoria.fpoo.XML_Parser;
+package edu.upvictoria.fpoo.XMLParser;
 
 /**
  * ErrorHandler class
