@@ -32,41 +32,10 @@ XMLParser parser = new XMLParser(XML_FILE);
 XMLTree tree = parser.parse();
 ```
 ### Imprimir árbol
-Si se quiere imprimir el árbol, hay una clase destinada a ello. Se debe llamar, de manera estática, al método `printTree` de la clase `TreePrinter`, donde el método recibe como parámetros la raíz del árbol (`node`), y el nivel del árbol (`level`).
+Si se requiere imprimir el árbol, se puede utilizar el método `search()` de la clase `XMLTree`:
 ```java
-/**
- * Print the tree structure
- * 
- * @param node  the node to print
- * @param level the level of the node
- */
-public static void printTree(TagNode node, int level) {
-    for (int i = 0; i < level; i++)
-        System.out.print("  ");
-    System.out.println(node.getName());
-
-    if (node.getContent() != null) {
-        for (int i = 0; i < level; i++)
-            System.out.print("  ");
-        System.out.println("Content: " + node.getContent());
-    }
-
-    if (!node.getAttributes().isEmpty()) {
-        for (Attribute attribute : node.getAttributes()) {
-            for (int i = 0; i < level; i++)
-                System.out.print("  ");
-            System.out.println(attribute.getName() + " = " + attribute.getValue());
-        }
-    }
-    for (TagNode child : node.getChildren())
-        printTree(child, level + 1);
-    }
+tree.search();
 ```
-#### Ejemplo de uso:
-```java
-TreePrinter.printTree(tree.getRoot(), 0);
-```
-
 ### Manejo de excepciones
 La librería de encarga de manejar las excepciones posibles, tanto errores `sintácticos` cómo `lógicos`, esto lo hace mediante la clase `ErrorHandler`, que cuenta con métodos destinados a enviar errores, diciendo **detalles** como el mensaje de error y la línea en la que se lanzó el mismo:
 ```java
@@ -108,7 +77,7 @@ public DTDParser(String path){
     this.dtdPath = path;
 }
 ```
-Una vez instanciada la clase, es necesario llamar al método `parse()` de la clase, esté método nuevamente puede o no recibir la ruta al archivo **DTD**. Este método debe recibir la ruta al archivo **DTD**, donde hay dos maneras de conseguir dicha ruta: 
+Una vez instanciada la clase, es necesario llamar al método `parse()` de la clase. Para que este método se ejecute con éxito se debe contar con el **Path** al archivo **DTD**, donde hay dos formas de hacerlo:
 1. Directamente colocar la ruta del archivo DTD dentro del código.
 2. Utilizar el método `getDtdPath()` del objeto `XMLTree` para obtener la ruta extraída por el **parser** XML en tiempo de ejecución.
 
