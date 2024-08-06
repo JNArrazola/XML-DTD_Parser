@@ -1,8 +1,10 @@
-package edu.upvictoria.fpoo.DTDParser;
+package edu.upvictoria.fpoo;
 
-import edu.upvictoria.fpoo.XMLParser.TreePrinter;
 import edu.upvictoria.fpoo.XMLParser.XMLParser;
 import edu.upvictoria.fpoo.XMLParser.XMLTree;
+import edu.upvictoria.fpoo.DTDParser.DTDParser;
+import edu.upvictoria.fpoo.DTDParser.DTDRestrictions;
+import edu.upvictoria.fpoo.DTDParser.DTDInterpreter;
 
 /**
  * App class

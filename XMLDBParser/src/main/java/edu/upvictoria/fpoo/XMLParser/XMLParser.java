@@ -271,11 +271,18 @@ public class XMLParser {
     if(stack.empty())
       ErrorHandler.throwError("Not found tag: " + tokens.get(actual).getLexeme(), tokens.get(actual).getLine());
 
-    while(peek() != TokenType.OPEN_TAG){
+    while(!isAtEnd() && peek() != TokenType.OPEN_TAG){
       advance();
       value += tokens.get(actual).getLexeme() + " ";
     }
 
+    if(isAtEnd())
+      ErrorHandler.throwError("Invalid tag: expected close tag", tokens.get(actual).getLine());
+
     stack.peek().setContent(value.trim());
+  }
+
+  private boolean isAtEnd(){
+    return getActualToken() == TokenType.EOF;
   }
 }

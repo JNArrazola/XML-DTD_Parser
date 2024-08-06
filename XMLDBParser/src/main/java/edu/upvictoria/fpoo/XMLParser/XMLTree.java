@@ -52,8 +52,8 @@ public class XMLTree {
      * @param tagName the name of the tag to search
      * @return ArrayList the list of nodes found
       */
-    public ArrayList<TagNode> search(String tagName) {
-      ArrayList<TagNode> result = new ArrayList<>();
+    public ArrayList<XMLTree> search(String tagName) {
+      ArrayList<XMLTree> result = new ArrayList<>();
 
       dfs(tagName, root, result);
       return result;
@@ -65,11 +65,46 @@ public class XMLTree {
      * @param node the node to search
      * @param result the list of nodes found
       */
-    private void dfs(String name, TagNode node, ArrayList<TagNode> result) {
+    private void dfs(String name, TagNode node, ArrayList<XMLTree> result) {
       if(node == null) return;
-      if(node.getName().equals(name)) result.add(node);
+      if(node.getName().equals(name)) result.add(new XMLTree(node));
 
       for(TagNode child : node.getChildren()) 
         dfs(name, child, result);
     }
+
+    /**
+     * Method to print the tree structure
+      */
+    public void printTree() {
+      print(root, 0);
+    }
+
+    /**
+     * Print the tree structure
+     * 
+     * @param node  the node to print
+     * @param level the level of the node
+     */
+    private void print(TagNode node, int level) {
+      for (int i = 0; i < level; i++)
+          System.out.print("  ");
+      System.out.println(node.getName());
+
+      if (node.getContent() != null) {
+          for (int i = 0; i < level; i++)
+              System.out.print("  ");
+          System.out.println("Content: " + node.getContent());
+      }
+
+      if (!node.getAttributes().isEmpty()) {
+          for (Attribute attribute : node.getAttributes()) {
+              for (int i = 0; i < level; i++)
+                  System.out.print("  ");
+              System.out.println(attribute.getName() + " = " + attribute.getValue());
+          }
+      }
+      for (TagNode child : node.getChildren())
+          print(child, level + 1);
+  }
 }
