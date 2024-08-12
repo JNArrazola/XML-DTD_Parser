@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"edu.upvictoria.fpoo.DTDParser"},{"l":"edu.upvictoria.fpoo.XML_Parser"}];updateSearchResults();
