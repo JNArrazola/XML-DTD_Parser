@@ -216,6 +216,16 @@ public class XMLParser {
           tagTokens.pop();
           node.addAttribute(new Attribute(tagTokens.pop().getLexeme(), tokens.get(actual).getLexeme()));
           break;
+        case SLASH: 
+          // Auto-close tag
+          // This is a special case, because the tag can be closed without a close tag, they are called auto-close tags
+          // Example: <tag />
+          consume(TokenType.SLASH);
+          if(getActualToken() != TokenType.CLOSE_TAG)
+            ErrorHandler.throwError("Invalid tag: expected close tag after auto-close tag: ", tokens.get(actual).getLine());
+
+          stack.peek().addChild(node);
+          return;
         case EOF:
           ErrorHandler.throwError("Invalid tag: expected close tag", tokens.get(actual).getLine());
           break;

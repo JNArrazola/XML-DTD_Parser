@@ -89,8 +89,9 @@ public class DTDInterpreter {
                             ErrorHandler.throwError("Element " + key + " can't have children");
                         
                         if(element.getType()!=null)
-                            if(node.getContent() == null)
+                            if(node.getContent() == null && element.isRequired())
                                 ErrorHandler.throwError("Element " + key + " must have content");
+                        
                     } else {
                             switch (element.getCardinality()) {
                                 case '\0':

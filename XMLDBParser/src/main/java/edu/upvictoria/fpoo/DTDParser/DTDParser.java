@@ -11,7 +11,7 @@ public class DTDParser {
     private ArrayList<Token> tokens; // List of tokens
     private String dtdPath; // Path of the DTD file
     private HashMap<String, ArrayList<Element>> elements; // Elements of the DTD file
-
+    int ctr = 0;
     /**
      * Constructor without path
       */
@@ -82,8 +82,19 @@ public class DTDParser {
         while(!isAtEnd()){
             switch (getActualToken()) {
                 case OPEN_TAG:
-                    if(peek() == TokenType.EXCLAMATION && peek(2) == TokenType.ELEMENT)
-                        handleElement();
+                    // if(peek() == TokenType.EXCLAMATION && peek(2) == TokenType.ELEMENT)
+                    //     handleElement();
+                    
+                    if(peek() == TokenType.EXCLAMATION){
+                        if(peek(2) == TokenType.ELEMENT)
+                            handleElement();
+                        else if(peek(2) == TokenType.ATTLIST)
+                            handleAttlist();
+                        else 
+                            ErrorHandler.throwError("Invalid token: " + tokens.get(actual).getLexeme(), tokenLine());
+                    } else 
+                        ErrorHandler.throwError("What did you wrote at this line homie: " + tokens.get(actual).getLexeme(), tokenLine());
+
                     break;
                 case CLOSE_TAG:
                     consume(TokenType.CLOSE_TAG);
@@ -91,7 +102,7 @@ public class DTDParser {
                 case EOF:
                     break;
                 default:
-                    ErrorHandler.throwError("Invalid token: " + getActualToken());
+                    ErrorHandler.throwError("Invalid token: " + tokens.get(actual).getLexeme(), tokenLine());
                     break;
             }
         } 
@@ -149,6 +160,9 @@ public class DTDParser {
                     handleOpenParenthesis(name);
                     break;
                 case IDENTIFIER: 
+                    if(name != null)
+                        ErrorHandler.throwError("Identifier already defined", tokenLine());
+                    
                     name = consumeWReturn(TokenType.IDENTIFIER).getLexeme();
                     break;
                 case OPEN_TAG: // If the element is not closed
@@ -217,7 +231,6 @@ public class DTDParser {
                     
                     if(getActualToken() == TokenType.COMMA || !children.isEmpty())
                         ErrorHandler.throwError("When using PCDATA or REQUIRED, no more elements are allowed", tokenLine());
-                    
                     break;
                 case PCDATA:
                 case REQUIRED:
@@ -232,7 +245,6 @@ public class DTDParser {
                     ErrorHandler.throwError("Invalid token: " + getActualToken(), tokenLine());
                     break;
             }
-            
         }
 
         if(isAtEnd()) // If the loop ends because of EOF
@@ -306,5 +318,34 @@ public class DTDParser {
       */
     private int tokenLine(){
         return tokens.get(actual).getLine();
+    }
+    
+    /**
+     * Handle attlist in the DTD
+     * @throws Exception if an error occurs
+      */
+    private void handleAttlist() {
+        consume(TokenType.OPEN_TAG);
+        consume(TokenType.EXCLAMATION);
+        consume(TokenType.ATTLIST);
+        consume(TokenType.IDENTIFIER);
+        consume(TokenType.IDENTIFIER);
+
+        if(getActualToken() == TokenType.CDATA)
+            consume(TokenType.CDATA);
+        else if(getActualToken() == TokenType.PCDATA)
+            consume(TokenType.PCDATA);
+        
+        if(getActualToken() == TokenType.HASHTAG){
+            consume(TokenType.HASHTAG);
+            if(getActualToken() == TokenType.REQUIRED)
+                consume(TokenType.REQUIRED);
+            else if(getActualToken() == TokenType.IMPLIED)
+                consume(TokenType.IMPLIED);
+            else 
+                ErrorHandler.throwError("Invalid token: Expected REQUIRED or IMPLIED but found " + getActualToken(), tokenLine());
+        }
+
+        consume(TokenType.CLOSE_TAG);
     }
 }

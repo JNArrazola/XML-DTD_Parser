@@ -21,6 +21,9 @@ public class DTDLexer {
     reservedWords.put("ELEMENT", TokenType.ELEMENT);
     reservedWords.put("PCDATA", TokenType.PCDATA);
     reservedWords.put("REQUIRED", TokenType.REQUIRED);
+    reservedWords.put("IMPLIED", TokenType.IMPLIED);
+    reservedWords.put("ATTLIST", TokenType.ATTLIST);
+    reservedWords.put("CDATA", TokenType.CDATA);
   }
 
   /**
@@ -161,7 +164,7 @@ public class DTDLexer {
   private void handleReservedWord(){
     int start = actual;
 
-    while (isAlphanumeric(peek())){
+    while (isAlphanumeric(peek()) || peek() == '_'){
       if(isAtEnd())
         ErrorHandler.throwError("Reserved word not closed", line);
       

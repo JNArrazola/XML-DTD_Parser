@@ -135,7 +135,7 @@ dtdInterpreter.interpret(xmlTree, dtdRestrictions);
 ```java
 XMLParser xmlParser = new XMLParser(); // Objeto del parser XML
 XMLTree xmlTree = xmlParser.parse(XML_FILE); // Método parse() que retorna un objeto XMLTree
-TreePrinter.printTree(xmlTree.getRoot(), 0);
+xmlTree.print() // Método para imprimir el árbol
 
 DTDParser dtdParser = new DTDParser(); // Objeto parser DTD
 DTDRestrictions dtdRestrictions = dtdParser.parse(xmlTree.getDtdPath()); // Método parse() que retorna un objeto DTDRestrictions

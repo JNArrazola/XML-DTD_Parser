@@ -206,7 +206,7 @@ public class XMLLexer {
   public void consumeTagValue(){
     int start = actual;
 
-    while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_') || peek() == '.')
+    while (!isAtEnd() && (isAlphanumeric(peek()) || peek() == '-' || peek() == '_') || peek() == '.' || peek() == '(' || peek() == ')')
       advance();
     
     

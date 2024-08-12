@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DTD declaration -->
-<!DOCTYPE database SYSTEM "database.dtd">
+<!-- <!DOCTYPE database SYSTEM "database.dtd"> -->
 
 <!-- XML format based on DTD -->
 <database version="1.0" author="admin">
